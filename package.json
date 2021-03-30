@@ -1,0 +1,26 @@
+{
+  "name": "react-simple-form-manager",
+  "version": "1.0.0",
+  "description": "Easy and simple way to manage your react form data and validations",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf ./lib && tsc"
+  },
+  "author": "Julio Cordeiro",
+  "license": "ISC",
+  "files": [
+    "lib/**/*"
+  ],
+  "dependencies": {
+    "react": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.3",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
+    "eslint": "^7.23.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.2.3",
+    "webpack": "^5.28.0"
+  }
+}
