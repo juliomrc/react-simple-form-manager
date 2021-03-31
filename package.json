@@ -1,16 +1,24 @@
 {
   "name": "react-simple-form-manager",
   "version": "1.0.0",
-  "description": "Easy and simple way to manage your react form data and validations",
-  "main": "index.js",
-  "scripts": {
-    "build": "rimraf ./lib && tsc"
-  },
+  "description": "Easy and simple way to manage your react form state and validations",
+  "keywords": ["react", "simple", "form", "state", "validations"],
   "author": "Julio Cordeiro",
-  "license": "ISC",
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "./lib/index.d.ts",
+  "sideEffects": false,
   "files": [
     "lib/**/*"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juliomrc/react-simple-form-manager"
+  },
+  "scripts": {
+    "build": "rimraf ./lib && tsc"
+  },
   "dependencies": {
     "react": "^17.0.2"
   },

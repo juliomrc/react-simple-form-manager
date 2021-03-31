@@ -18,14 +18,14 @@ export const useFormManager = <TFormData>({
     const fieldValidator = validators[field];
 
     if (fieldValidator) {
-      const error = fieldValidator(fieldValue);
+      const error = fieldValidator(fieldValue, formValues.formState);
       formValidations.setFieldErrorState(field, error);
     }
 
     const partialState: Partial<TFormData> = {};
     partialState[field] = fieldValue;
 
-    formValues.updateState(partialState);
+    formValues.updateState(partialState); 
   };
 
   useEffect(() => {
