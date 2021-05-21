@@ -1,26 +1,30 @@
-export interface UseFormManagerProps<TFormState> extends UseFormValidationsProps {
+export interface UseFormManagerProps<TFormState> {
   initialState?: Partial<TFormState>;
   validators?: FormValidators<TFormState>;
   onSubmit: () => void;
+  showErrorsAfter?: ShowErrorsAfter
 }
 
 export type FormValidators<TFormState> = {
   [K in keyof Partial<TFormState>]: (fieldValue: TFormState[K], formState?: TFormState) => boolean;
 }
 
+type ShowErrorsAfter = "customTouch" | "submit" | "always";
+
 export interface UseFormValidationsProps {
-  triedSubmitting: boolean;
-  showErrorsAfter: ShowErrorsAfter
+  triedSubmitting?: boolean;
+  showErrorsAfter?: ShowErrorsAfter
 }
 
-type ShowErrorsAfter = "customTouch" | "submit" | "always";
 
 export interface UseFormManagerOut<TFormData> {
   formState: TFormData;
   visibleErrors: Partial<Record<keyof TFormData, boolean>>;
   hasEdits: boolean;
   hasErrors: boolean;
+  createUpdaterAndValidatorForField: <K extends keyof TFormData>(field: K) => (fieldValue: TFormData[K]) => void
   updateAndValidateField: <K extends keyof TFormData>(field: K, fieldValue: TFormData[K]) => void;
+  updateAndValidateState: (updatedState: Partial<TFormData>) => void
   handleAllowDynamicValidation: (field: keyof TFormData) => void;
   handleSubmit: (event: React.SyntheticEvent) => void;
 }

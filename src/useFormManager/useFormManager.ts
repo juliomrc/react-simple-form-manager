@@ -5,9 +5,9 @@ import { FormValidators, UseFormManagerOut, UseFormManagerProps } from './types'
 
 export const useFormManager = <TFormData>({
   validators = {} as FormValidators<TFormData>,
-  initialState,
+  initialState = {},
   onSubmit,
-  showErrorsAfter = "customTouch",
+  showErrorsAfter = "submit",
 }: UseFormManagerProps<TFormData>): UseFormManagerOut<TFormData> => {
   const [triedSubmitting, setTriedSubmitting] = useState(false);
 
@@ -25,7 +25,33 @@ export const useFormManager = <TFormData>({
     const partialState: Partial<TFormData> = {};
     partialState[field] = fieldValue;
 
-    formValues.updateState(partialState); 
+    formValues.updateState(partialState);
+  };
+
+  const updateAndValidateState = (updatedState: Partial<TFormData>) => {
+    const stateAfterUpdate: TFormData = {
+      ...formValues.formState,
+      ...updatedState,
+    };
+
+    Object.keys(updatedState).forEach((key) => {
+      const fieldKey = key as keyof TFormData;
+      const fieldValidator = validators[fieldKey];
+      if (fieldValidator) {
+        const error = fieldValidator(updatedState[fieldKey] as TFormData[keyof TFormData], stateAfterUpdate);
+        formValidations.setFieldErrorState(fieldKey, error);
+      }
+    });
+
+    formValues.updateState(stateAfterUpdate);
+  };
+
+  const createUpdaterAndValidatorForField = <K extends keyof TFormData>(field: K) => {
+    const fieldUpdaterAndValidator = (fieldValue: TFormData[K]) => {
+      updateAndValidateField(field, fieldValue);
+    };
+
+    return fieldUpdaterAndValidator;
   };
 
   useEffect(() => {
@@ -57,7 +83,9 @@ export const useFormManager = <TFormData>({
     hasEdits: formValues.hasEdits,
     visibleErrors: formValidations.visibleErrors,
     hasErrors: formValidations.hasErrors,
+    createUpdaterAndValidatorForField,
     updateAndValidateField,
+    updateAndValidateState,
     handleAllowDynamicValidation: formValidations.handleAllowDynamicValidation,
     handleSubmit,
   };
