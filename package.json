@@ -2,7 +2,13 @@
   "name": "react-simple-form-manager",
   "version": "1.0.0",
   "description": "Easy and simple way to manage your react form state and validations",
-  "keywords": ["react", "simple", "form", "state", "validations"],
+  "keywords": [
+    "react",
+    "simple",
+    "form",
+    "state",
+    "validations"
+  ],
   "author": "Julio Cordeiro",
   "license": "MIT",
   "main": "index.js",
