@@ -1,58 +1,92 @@
-import { useEffect, useState } from 'react';
-import { useFormValidations } from './useFormValidations';
-import { useFormValues } from './useFormValues';
-import { FormValidators, UseFormManagerOut, UseFormManagerProps } from './types';
+import { useCallback, useEffect, useState } from "react";
+import { useFormValidations } from "./useFormValidations";
+import { useFormValues } from "./useFormValues";
+import { FormValidators, UseFormManagerOut, UseFormManagerProps } from "./types";
 
 export const useFormManager = <TFormData>({
     validators = {} as FormValidators<TFormData>,
     initialState = {},
     onSubmit,
     showErrorsAfter = "submit",
+    allowInvalidSubmit,
 }: UseFormManagerProps<TFormData>): UseFormManagerOut<TFormData> => {
     const [triedSubmitting, setTriedSubmitting] = useState(false);
 
     const formValidations = useFormValidations<TFormData>({ triedSubmitting, showErrorsAfter });
     const formValues = useFormValues<TFormData>(initialState);
 
-    const updateAndValidateField = <K extends keyof TFormData>(field: K, fieldValue: TFormData[K]) => {
-        const fieldValidator = validators[field];
+    const updateAndValidateField = useCallback(
+        <K extends keyof TFormData>(field: K, fieldValue: TFormData[K]) => {
+            const fieldValidator = validators[field];
 
-        if (fieldValidator) {
-            const error = fieldValidator(fieldValue, formValues.formState);
-            formValidations.setFieldErrorState(field, error);
-        }
-
-        const partialState: Partial<TFormData> = {};
-        partialState[field] = fieldValue;
-
-        formValues.updateState(partialState);
-    };
-
-    const updateAndValidateState = (updatedState: Partial<TFormData>) => {
-        const stateAfterUpdate: TFormData = {
-            ...formValues.formState,
-            ...updatedState,
-        };
-
-        Object.keys(updatedState).forEach((key) => {
-            const fieldKey = key as keyof TFormData;
-            const fieldValidator = validators[fieldKey];
             if (fieldValidator) {
-                const error = fieldValidator(updatedState[fieldKey] as TFormData[keyof TFormData], stateAfterUpdate);
-                formValidations.setFieldErrorState(fieldKey, error);
+                const error = fieldValidator(fieldValue, formValues.formState);
+                formValidations.setFieldErrorState(field, error);
             }
-        });
 
-        formValues.updateState(stateAfterUpdate);
-    };
+            const partialState: Partial<TFormData> = {};
+            partialState[field] = fieldValue;
 
-    const createUpdaterAndValidatorForField = <K extends keyof TFormData>(field: K) => {
-        const fieldUpdaterAndValidator = (fieldValue: TFormData[K]) => {
-            updateAndValidateField(field, fieldValue);
-        };
+            formValues.updateState(partialState);
+        },
+        [
+            validators,
+            formValues.formState,
+            formValidations.setFieldErrorState,
+            formValues.updateState,
+        ],
+    );
 
-        return fieldUpdaterAndValidator;
-    };
+    const updateAndValidateState = useCallback(
+        (updatedState: Partial<TFormData>) => {
+            const stateAfterUpdate: TFormData = {
+                ...formValues.formState,
+                ...updatedState,
+            };
+
+            Object.keys(updatedState).forEach((key) => {
+                const fieldKey = key as keyof TFormData;
+                const fieldValidator = validators[fieldKey];
+                if (fieldValidator) {
+                    const error = fieldValidator(
+                        updatedState[fieldKey] as TFormData[keyof TFormData],
+                        stateAfterUpdate,
+                    );
+                    formValidations.setFieldErrorState(fieldKey, error);
+                }
+            });
+
+            formValues.updateState(stateAfterUpdate);
+        },
+        [
+            formValues.formState,
+            validators,
+            formValidations.setFieldErrorState,
+            formValues.updateState,
+        ],
+    );
+
+    const updaterAndValidatorForField = useCallback(
+        <K extends keyof TFormData>(field: K) => {
+            const fieldUpdaterAndValidator = (fieldValue: TFormData[K]) => {
+                updateAndValidateField(field, fieldValue);
+            };
+
+            return fieldUpdaterAndValidator;
+        },
+        [updateAndValidateField],
+    );
+
+    const allowErrorVisibilityForField = useCallback(
+        <K extends keyof TFormData>(field: K) => {
+            const allowDynamicValidationsForField = () => {
+                formValidations.allowErrorVisibility(field);
+            };
+
+            return allowDynamicValidationsForField;
+        },
+        [formValidations.allowErrorVisibility],
+    );
 
     useEffect(() => {
         if (initialState) {
@@ -63,30 +97,36 @@ export const useFormManager = <TFormData>({
     const validateInitialData = () => {
         Object.keys(validators).forEach((key) => {
             const fieldKey = key as keyof TFormData;
-            const error = validators[fieldKey](formValues.formState[fieldKey], formValues.formState);
+            const error = validators[fieldKey](
+                formValues.formState[fieldKey],
+                formValues.formState,
+            );
             formValidations.setFieldErrorState(fieldKey, error);
         });
     };
 
-    const handleSubmit = (event: React.SyntheticEvent) => {
-        event.preventDefault();
-        setTriedSubmitting(true);
+    const handleSubmit = useCallback(
+        (event: React.SyntheticEvent) => {
+            event.preventDefault();
+            setTriedSubmitting(true);
 
-        if (formValues.hasEdits && !formValidations.hasErrors) {
-            onSubmit();
-        }
-    };
-
+            if (allowInvalidSubmit || (formValues.hasEdits && !formValidations.hasErrors)) {
+                onSubmit(formValues.formState);
+            }
+        },
+        [setTriedSubmitting, formValues.hasEdits, formValidations.hasErrors, onSubmit],
+    );
 
     return {
         formState: formValues.formState,
         hasEdits: formValues.hasEdits,
         visibleErrors: formValidations.visibleErrors,
         hasErrors: formValidations.hasErrors,
-        createUpdaterAndValidatorForField,
+        updaterAndValidatorForField,
+        allowErrorVisibilityForField,
         updateAndValidateField,
         updateAndValidateState,
-        handleAllowDynamicValidation: formValidations.handleAllowDynamicValidation,
+        allowErrorVisibility: formValidations.allowErrorVisibility,
         handleSubmit,
     };
 };

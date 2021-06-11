@@ -32,7 +32,7 @@
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
         "paths": {
-            "@some-module/*": ["src/some-module/*"]
+            "@src/*": ["src/*"]
         }
     }
 }

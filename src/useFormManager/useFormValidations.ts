@@ -1,7 +1,9 @@
-import { useCallback, useMemo, useState } from 'react';
-import { UseFormValidationsProps, UseFormValidationsOut, FormValidationsState } from './types';
+import { useCallback, useMemo, useState } from "react";
+import { UseFormValidationsProps, UseFormValidationsOut, FormValidationsState } from "./types";
 
-export const useFormValidations = <TFormData>(props: UseFormValidationsProps): UseFormValidationsOut<TFormData> => {
+export const useFormValidations = <TFormData>(
+    props: UseFormValidationsProps,
+): UseFormValidationsOut<TFormData> => {
     const [errorsState, setErrorsState] = useState<FormValidationsState<TFormData>>({});
     const [touchedFields, setTouchedFields] = useState<FormValidationsState<TFormData>>({});
 
@@ -21,33 +23,39 @@ export const useFormValidations = <TFormData>(props: UseFormValidationsProps): U
         return newVisibleErrors;
     }, [props.showErrorsAfter, props.triedSubmitting, touchedFields, errorsState]);
 
-    const handleAllowDynamicValidation = useCallback((field: keyof TFormData) => {
-        setTouchedFields((currentTouchedFields) => {
-            return {
-                ...currentTouchedFields,
-                [field]: true,
-            };
-        });
-    }, []);
+    const allowErrorVisibility = useCallback(
+        (field: keyof TFormData) => {
+            setTouchedFields((currentTouchedFields) => {
+                return {
+                    ...currentTouchedFields,
+                    [field]: true,
+                };
+            });
+        },
+        [setTouchedFields],
+    );
 
-    const setFieldErrorState = useCallback((field: keyof TFormData, hasError: boolean) => {
-        setErrorsState((currentErrorState) => {
-            return {
-                ...currentErrorState,
-                [field]: hasError,
-            };
-        });
-    }, []);
+    const setFieldErrorState = useCallback(
+        (field: keyof TFormData, hasError: boolean) => {
+            setErrorsState((currentErrorState) => {
+                return {
+                    ...currentErrorState,
+                    [field]: hasError,
+                };
+            });
+        },
+        [setErrorsState],
+    );
 
-    const hasErrors = Object.values(errorsState).some((error) => {
-        return error;
-    });
+    const hasErrors = useMemo(() => {
+        return Object.values(errorsState).some((error) => error);
+    }, [errorsState]);
 
     return {
         hasErrors,
         errorsState,
         visibleErrors,
-        handleAllowDynamicValidation,
+        allowErrorVisibility,
         setFieldErrorState,
     };
 };

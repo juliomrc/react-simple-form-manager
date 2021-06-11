@@ -11,7 +11,7 @@ module.exports = {
     setupFilesAfterEnv: ["<rootDir>/.tests/jest-setup.ts"],
     coverageProvider: "babel",
     moduleNameMapper: {
-        "@some-module/(.*)$": "<rootDir>/src/some-module/$1",
+        "@src/(.*)$": "<rootDir>/src/$1",
         // https://jestjs.io/docs/webpack
         "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
             "<rootDir>/.tests/__mocks__/file-mock.js",

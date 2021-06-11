@@ -37,5 +37,6 @@ module.exports = {
                 endOfLine: "auto",
             },
         ],
+        "max-len": ["warning", 100],
     },
 };
