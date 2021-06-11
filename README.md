@@ -45,7 +45,7 @@ Although this package can be used with plain javascript, types are included in t
 | formState                    | [TFormState](#form-state)                                | The current form state                                      |
 | hasEdits                     | boolean                                                  | If there was any change to the initialState                 |
 | hasErrors                    | boolean                                                  | If there are any errors in the form state                   |
-| visibleErrors                | [VisibleErrors](#visible errors)                         | Object with the errors that should be visible               |
+| visibleErrors                | [VisibleErrors](#visible-errors)                         | Object with the errors that should be visible               |
 | updaterAndValidatorForField  | (fieldName: string) => (fieldValue: TFormValue) => void; | Returns the callback to update the field value              |
 | allowErrorVisibilityForField | (fieldName: string) => () => void;                       | Returns the callback to trigger the visibility of the error |
 | updateAndValidateField       | (fieldName: string, fieldValue: TFormValue) => void;     | Callback to update the field value                          |

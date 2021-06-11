@@ -1,6 +1,6 @@
 {
     "name": "react-simple-form-manager",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Easy and simple way to manage your react form state and validations",
     "keywords": [
         "react",
@@ -8,7 +8,8 @@
         "form",
         "manager",
         "state",
-        "validations"
+        "validations",
+        "typescript"
     ],
     "author": "Julio Cordeiro",
     "license": "MIT",
@@ -29,7 +30,6 @@
     },
     "homepage": "https://github.com/juliomrc/react-simple-form-manager#readme",
     "scripts": {
-        "prepare": "husky install",
         "start-dev": "webpack serve --hot --env dev",
         "clean-dist": "rimraf examples-dist",
         "type-check": "tsc --noEmit",
