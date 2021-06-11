@@ -1,6 +1,6 @@
 {
     "name": "react-simple-form-manager",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Easy and simple way to manage your react form state and validations",
     "keywords": [
         "react",
@@ -30,6 +30,7 @@
     },
     "homepage": "https://github.com/juliomrc/react-simple-form-manager#readme",
     "scripts": {
+        "prepare": "husky install",
         "start-dev": "webpack serve --hot --env dev",
         "clean-dist": "rimraf examples-dist",
         "type-check": "tsc --noEmit",
@@ -38,7 +39,7 @@
         "build-prd": "npm-run-all -p clean-dist test type-check & webpack",
         "clean-lib": "rimraf lib",
         "build-package": "npm run clean-lib && npm run test && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json && pkgfiles",
-        "publish": "npm run build-package && git push --tags && npm publish"
+        "publish-package": "npm run build-package && git push --tags && npm publish"
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"
