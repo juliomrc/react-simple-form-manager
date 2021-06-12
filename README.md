@@ -3,10 +3,10 @@
 ## Table of contents
 
 -   [Motivation](#motivation)
--   [Setup](#setup)
--   [Usage examples](#usage-examples)
+-   [Getting started](#getting-started)
 -   [API](#api)
 -   [Type safety and intellisense](#type-safety-and-intellisense)
+-   [Usage examples](#usage-examples)
 
 ---
 
@@ -14,7 +14,7 @@
 
 There are a lot of npm packages connected to [react forms](https://www.npmjs.com/search?q=react%20form) out there, and most of the popular ones support everything a form might require. Great, but that makes said tools complicated to use, even though a lot of forms might be small and simple. What's missing? Something simple to manage the state and trigger the validations for a form. That is it.
 
-**What this package aims to achieve:** One hook to easily and quickly manage the form **data and validations** with **type support**.
+**What this package aims to achieve:** One hook to easily and quickly manage the form **data and validations with type support**.
 
 **What this package does not provide:** Inputs, wrappers, or any other form of UI components.
 
@@ -22,9 +22,55 @@ Although this package can be used with plain javascript, types are included in t
 
 ---
 
-## Setup
+## Getting started
 
-`npm i react-simple-form-manager`. That is it.
+Install the package
+
+```
+npm i react-simple-form-manager
+```
+
+Import the `useFormManager` and use it with your form component:
+
+```tsx
+import React from "react";
+import { useFormManager } from "react-simple-form-manager";
+
+interface SimpleFormData {
+    firstName: string;
+    lastName: string;
+    age: number;
+}
+
+interface SimpleFormProps {
+    onSubmit: (formState: SimpleFormData) => void;
+}
+
+export const SimpleForm: React.FC<SimpleFormProps> = (props) => {
+    const formManager = useFormManager<SimpleFormData>({ onSubmit: props.onSubmit });
+
+    return (
+        <form onSubmit={formManager.handleSubmit}>
+            <GenericTextInput
+                label={"First Name"}
+                onValueChange={formManager.updaterAndValidatorForField("firstName")}
+                value={formManager.formState.firstName}
+            />
+            <GenericTextInput
+                label={"Last Name"}
+                onValueChange={formManager.updaterAndValidatorForField("lastName")}
+                value={formManager.formState.lastName}
+            />
+            <GenericAmountInput
+                label={"Age"}
+                onValueChange={formManager.updaterAndValidatorForField("age")}
+                value={formManager.formState.age}
+            />
+            <button type={"submit"}>Submit</button>
+        </form>
+    );
+};
+```
 
 ## API
 
@@ -168,49 +214,11 @@ interface VisibleErrors {
 
 ## Type safety and intellisense
 
+If a type is provided to the `useFormManager<MyFormDataType>`, this package allows IDEs to work the intellisense magic and offers type safety for every attribute and attribute value type.
+
+![A gif representing type safety and intellisense](examples/intellisense-demo/type-safety-and-intellisense.gif)
+
 ## Usage examples
-
-Simple use case:
-
-```tsx
-import React from "react";
-import { useFormManager } from "react-simple-form-manager";
-
-interface SimpleFormData {
-    firstName: string;
-    lastName: string;
-    age: number;
-}
-
-interface SimpleFormProps {
-    onSubmit: (formState: SimpleFormData) => void;
-}
-
-export const SimpleForm: React.FC<SimpleFormProps> = (props) => {
-    const formManager = useFormManager<SimpleFormData>({ onSubmit: props.onSubmit });
-
-    return (
-        <form onSubmit={formManager.handleSubmit}>
-            <GenericTextInput
-                label={"First Name"}
-                onValueChange={formManager.updaterAndValidatorForField("firstName")}
-                value={formManager.formState.firstName}
-            />
-            <GenericTextInput
-                label={"Last Name"}
-                onValueChange={formManager.updaterAndValidatorForField("lastName")}
-                value={formManager.formState.lastName}
-            />
-            <GenericAmountInput
-                label={"Age"}
-                onValueChange={formManager.updaterAndValidatorForField("age")}
-                value={formManager.formState.age}
-            />
-            <button type={"submit"}>Submit</button>
-        </form>
-    );
-};
-```
 
 Slightly less simple use case:
 
