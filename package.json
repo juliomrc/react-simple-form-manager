@@ -1,6 +1,6 @@
 {
     "name": "react-simple-form-manager",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "Easy and simple way to manage your react form state and validations",
     "keywords": [
         "react",
