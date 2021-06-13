@@ -1,11 +1,12 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { UseFormValidationsProps, UseFormValidationsOut, FormValidationsState } from "./types";
+import { useReducerState } from "./useReducerState";
 
 export const useFormValidations = <TFormData>(
     props: UseFormValidationsProps,
 ): UseFormValidationsOut<TFormData> => {
-    const [errorsState, setErrorsState] = useState<FormValidationsState<TFormData>>({});
-    const [touchedFields, setTouchedFields] = useState<FormValidationsState<TFormData>>({});
+    const [errorsState, setErrorsState] = useReducerState<FormValidationsState<TFormData>>({});
+    const [touchedFields, setTouchedFields] = useReducerState<FormValidationsState<TFormData>>({});
 
     const visibleErrors: FormValidationsState<TFormData> = useMemo(() => {
         if (props.showErrorsAfter === "always") return errorsState;
@@ -25,24 +26,14 @@ export const useFormValidations = <TFormData>(
 
     const allowErrorVisibility = useCallback(
         (field: keyof TFormData) => {
-            setTouchedFields((currentTouchedFields) => {
-                return {
-                    ...currentTouchedFields,
-                    [field]: true,
-                };
-            });
+            setTouchedFields({ [field]: true } as FormValidationsState<TFormData>);
         },
         [setTouchedFields],
     );
 
     const setFieldErrorState = useCallback(
         (field: keyof TFormData, hasError: boolean) => {
-            setErrorsState((currentErrorState) => {
-                return {
-                    ...currentErrorState,
-                    [field]: hasError,
-                };
-            });
+            setErrorsState({ [field]: hasError } as FormValidationsState<TFormData>);
         },
         [setErrorsState],
     );
