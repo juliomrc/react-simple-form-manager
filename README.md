@@ -221,7 +221,7 @@ If a type is provided to the `useFormManager<MyFormDataType>`, this package allo
 
 ## Usage examples
 
-#### Slightly less simple use case
+### Slightly less simple use case
 
 ```tsx
 interface SimpleFormState {
