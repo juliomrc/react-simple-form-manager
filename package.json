@@ -32,7 +32,7 @@
     },
     "homepage": "https://github.com/juliomrc/react-simple-form-manager#readme",
     "scripts": {
-        "prepare": "husky install",
+        "prepare": "husky install && npm i -g np",
         "start-dev": "webpack serve --hot --env dev",
         "clean-dist": "rimraf examples-dist",
         "type-check": "tsc --noEmit",
@@ -40,8 +40,9 @@
         "build-dev": "npm-run-all -p clean-dist test type-check & webpack --env dev",
         "build-prd": "npm-run-all -p clean-dist test type-check & webpack",
         "clean-lib": "rimraf lib",
-        "build-package": "npm run clean-lib && npm run test && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json && pkgfiles",
-        "publish-package": "npm run build-package && git push --tags && npm publish"
+        "build-package": "npm run clean-lib && npm run test && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json",
+        "prepare-package": "npm run build-package && pkgfiles",
+        "publish-package": "npm run build-package && np"
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"
