@@ -1,4 +1,3 @@
-// Return true if the field has ERROR
 export const requiredValidator = (fieldValue: string | number | object) => {
     if (typeof fieldValue === "number") {
         return !(fieldValue || fieldValue === 0);
@@ -7,6 +6,6 @@ export const requiredValidator = (fieldValue: string | number | object) => {
     return !fieldValue;
 };
 
-export const yourCustomStringValidation = (stringValue: string) => {
-    return stringValue.length <= 15;
+export const maxLength = (stringValue: string) => {
+    return stringValue.length > 15;
 };

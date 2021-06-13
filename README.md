@@ -7,14 +7,18 @@
 -   [API](#api)
 -   [Type safety and intellisense](#type-safety-and-intellisense)
 -   [Usage examples](#usage-examples)
+-   -   [Slightly less simple use case](#slightly-less-simple-use-case)
+-   -   [Dealing with objects](#dealing-with-objects)
 
 ---
 
 ## Motivation
 
-There are a lot of npm packages connected to [react forms](https://www.npmjs.com/search?q=react%20form) out there, and most of the popular ones support everything a form might require. Great, but that makes said tools complicated to use, even though a lot of forms might be small and simple. What's missing? Something simple to manage the state and trigger the validations for a form. That is it.
+There are a lot of npm packages connected to [react forms](https://www.npmjs.com/search?q=react%20form) out there, and most of the popular ones support everything a form might require. Great, but that makes said tools complicated to use, even though a lot of forms might be small and simple.
 
-**What this package aims to achieve:** One hook to easily and quickly manage the form **data and validations with type support**.
+What's missing? Something simple to manage the state and trigger the validations for a form. That is it.
+
+**What this package aims to achieve:** One hook to easily and quickly manage the form data and validations with type support.
 
 **What this package does not provide:** Inputs, wrappers, or any other form of UI components.
 
@@ -35,19 +39,16 @@ Import the `useFormManager` and use it with your form component:
 ```tsx
 import React from "react";
 import { useFormManager } from "react-simple-form-manager";
+import { GenericTextInput, GenericAmountInput } from "./inputs";
 
-interface SimpleFormData {
+interface SimpleFormState {
     firstName: string;
     lastName: string;
     age: number;
 }
 
-interface SimpleFormProps {
-    onSubmit: (formState: SimpleFormData) => void;
-}
-
 export const SimpleForm: React.FC<SimpleFormProps> = (props) => {
-    const formManager = useFormManager<SimpleFormData>({ onSubmit: props.onSubmit });
+    const formManager = useFormManager<SimpleFormState>({ onSubmit: props.onSubmit });
 
     return (
         <form onSubmit={formManager.handleSubmit}>
@@ -81,23 +82,23 @@ export const SimpleForm: React.FC<SimpleFormProps> = (props) => {
 | initialState       | [Partial\<TFormState\>](#form-state)             | {}        | Initial data for form state                                     |
 | validators         | [FormValidators\<TFormState\>](#form-validators) | {}        | Object with callbacks used to validate each form field          |
 | showErrorsAfter    | [ShowErrorsAfter](#show-errors-after)            | "submit"  | Moment when to trigger the visibility of the validation errors  |
-| onSubmit           | (formState: TFormState) => void                  | undefined | Callback executed when the form is submitted with no errors     |
-| allowInvalidSubmit | boolean                                          | undefined | Allow executing the `onSubmit` callback with errors or no edits |
+| onSubmit           | `(formState: TFormState) => void`                | undefined | Callback executed when the form is submitted with no errors     |
+| allowInvalidSubmit | `boolean`                                        | undefined | Allow executing the `onSubmit` callback with errors or no edits |
 
 ### Output
 
-| Name                         | Type                                                     | Description                                                 |
-| ---------------------------- | -------------------------------------------------------- | ----------------------------------------------------------- |
-| formState                    | [TFormState](#form-state)                                | The current form state                                      |
-| hasEdits                     | boolean                                                  | If there was any change to the initialState                 |
-| hasErrors                    | boolean                                                  | If there are any errors in the form state                   |
-| visibleErrors                | [VisibleErrors](#visible-errors)                         | Object with the errors that should be visible               |
-| updaterAndValidatorForField  | (fieldName: string) => (fieldValue: TFormValue) => void; | Returns the callback to update the field value              |
-| allowErrorVisibilityForField | (fieldName: string) => () => void;                       | Returns the callback to trigger the visibility of the error |
-| updateAndValidateField       | (fieldName: string, fieldValue: TFormValue) => void;     | Callback to update the field value                          |
-| updateAndValidateState       | (formState: TFormState) => void;                         | Callback to update the whole state at once                  |
-| allowErrorVisibility         | (fieldName: string) => void;                             | Callback to trigger the visibility of the error             |
-| handleSubmit                 | () => void;                                              | Callback to pass to the form `onSubmit`                     |
+| Name                         | Type                                                       | Description                                                 |
+| ---------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------- |
+| formState                    | [TFormState](#form-state)                                  | The current form state                                      |
+| hasEdits                     | `boolean`                                                  | If there was any change to the initialState                 |
+| hasErrors                    | `boolean`                                                  | If there are any errors in the form state                   |
+| visibleErrors                | [VisibleErrors](#visible-errors)                           | Object with the errors that should be visible               |
+| updaterAndValidatorForField  | `(fieldName: string) => (fieldValue: TFormValue) => void;` | Returns the callback to update the field value              |
+| allowErrorVisibilityForField | `(fieldName: string) => () => void;`                       | Returns the callback to trigger the visibility of the error |
+| updateAndValidateField       | `(fieldName: string, fieldValue: TFormValue) => void;`     | Callback to update the field value                          |
+| updateAndValidateState       | `(formState: TFormState) => void;`                         | Callback to update the whole state at once                  |
+| allowErrorVisibility         | `(fieldName: string) => void;`                             | Callback to trigger the visibility of the error             |
+| handleSubmit                 | `() => void;`                                              | Callback to pass to the form `onSubmit`                     |
 
 ### Form state
 
@@ -195,9 +196,9 @@ Fields are validated on each change, but you might want to show the errors only 
 
 ### Visible errors
 
-An object that has the field name and a boolean that represents if the error should be visible or not, with the signature `Type VisibleErrors = Partial\<Record\<keyof TFormData, boolean\>\>`.
+An object that has the field name and a boolean that represents if the error should be visible or not, with the signature `Type VisibleErrors = Partial<Record<keyof TFormData, boolean>>`.
 
-For example, this is the VisibleErrors generated by the `MyCustomForm` type:
+For example, these are the VisibleErrors generated by the `MyCustomForm` type:
 
 ```typescript
 interface MyCustomForm {
@@ -220,59 +221,49 @@ If a type is provided to the `useFormManager<MyFormDataType>`, this package allo
 
 ## Usage examples
 
-Slightly less simple use case:
+#### Slightly less simple use case
 
 ```tsx
-interface SlightlyLessSimpleForm {
+interface SimpleFormState {
     firstName: string;
     lastName: string;
     age: number;
-    nationality: Nationality;
-    hasDualNationality: boolean;
-    address: ComplexAddress;
     loveForDogs: LoveForDogs;
+    nationality: Nationality;
 }
+
+type LoveForDogs = "unconditional" | "dogs-are-fine" | "everyone-loves-dogs";
 
 enum Nationality {
     Portuguese = "portuguese",
     Spanish = "spanish",
 }
 
-interface ComplexAddress {
-    country: string;
-    city: string;
-}
-
-type LoveForDogs = "unconditional" | "dogs-are-fine" | "everyone-loves-dogs";
-
-const initialFormState: Partial<SlightlyLessSimpleForm> = {
-    firstName: "Julio",
-    lastName: "Cordeiro",
-    address: {
-        country: "Poland",
-        city: "Warsaw",
-    },
-    hasDualNationality: false,
+const initialFormState: Partial<SimpleFormState> = {
+    firstName: "John",
+    lastName: "Doe",
     nationality: Nationality.Portuguese,
     loveForDogs: "everyone-loves-dogs",
 };
 
+const nameErrorMessage = "Your must include a name and it must be less than 15 characters.";
+const ageErrorMessage = "You must be at least 18 to continue.";
+
 export const SlightlyLessSimpleForm: React.FC = () => {
-    const handleSubmit = (formState: SlightlyLessSimpleForm) => {
+    const handleSubmit = (formState: SimpleFormState) => {
         console.log("Saved form state: ", formState);
     };
 
-    const formManager = useFormManager<SlightlyLessSimpleForm>({
-        initialState: initialFormState,
+    const formManager = useFormManager<SimpleFormState>({
         onSubmit: handleSubmit,
+        initialState: initialFormState,
         validators: {
-            firstName: requiredValidator,
-            lastName: requiredValidator,
+            firstName: (name: string) => requiredValidator(name) || maxLength(name),
+            lastName: (name: string) => requiredValidator(name) || maxLength(name),
+            age: (age: number) => age < 18,
         },
         showErrorsAfter: "customTouch",
     });
-
-    const errorMessage = "This input is wrong";
 
     return (
         <form onSubmit={formManager.handleSubmit}>
@@ -281,41 +272,174 @@ export const SlightlyLessSimpleForm: React.FC = () => {
                 value={formManager.formState.firstName}
                 onValueChange={formManager.updaterAndValidatorForField("firstName")}
                 onBlur={formManager.allowErrorVisibilityForField("firstName")}
-                errorMessage={formManager.visibleErrors.firstName && errorMessage}
+                errorMessage={formManager.visibleErrors.firstName && nameErrorMessage}
             />
             <GenericTextInput
                 label={"Last Name"}
                 value={formManager.formState.lastName}
                 onValueChange={formManager.updaterAndValidatorForField("lastName")}
                 onBlur={formManager.allowErrorVisibilityForField("lastName")}
-                errorMessage={formManager.visibleErrors.lastName && errorMessage}
+                errorMessage={formManager.visibleErrors.lastName && nameErrorMessage}
             />
             <GenericAmountInput
                 label={"Age"}
-                onValueChange={formManager.updaterAndValidatorForField("age")}
                 value={formManager.formState.age}
+                onValueChange={formManager.updaterAndValidatorForField("age")}
+                onBlur={formManager.allowErrorVisibilityForField("age")}
+                errorMessage={formManager.visibleErrors.age && ageErrorMessage}
             />
-            <GenericSelectInput
-                label={"Nationality"}
-                options={nationalityOptions}
+            <LoveForDogsSelect
+                label={"Love for dogs"}
+                onValueChange={formManager.updaterAndValidatorForField("loveForDogs")}
+                value={formManager.formState.loveForDogs}
+            />
+            <NationalitySelect
+                label={"Choose your nationality"}
                 onValueChange={formManager.updaterAndValidatorForField("nationality")}
                 value={formManager.formState.nationality}
             />
-            <GenericCheckbox
-                label={"hasDualNationality"}
-                onValueChange={formManager.updaterAndValidatorForField("hasDualNationality")}
-                value={formManager.formState.hasDualNationality}
+            <button type={"submit"}>Submit</button>
+        </form>
+    );
+};
+```
+
+### Dealing with objects
+
+If your form has to deal with an object, say an address, there are three easy solutions:
+
+1. [Use a helper method and spread the object;](#helper-method)
+2. [Use a mapper to flatten and rebuild the data structure;](#mappers)
+3. [Using a custom component that updates the whole object at once.](#custom-component)
+
+#### Helper method
+
+```tsx
+interface SimpleFormState {
+    someAttribute: string;
+    address: {
+        city: string;
+        country: string;
+    };
+}
+
+export const SimpleForm = () => {
+    const formManager = useFormManager<SimpleFormState>({
+        onSubmit: handleSubmit,
+    });
+
+    const handleUpdateCityAddress = (city: string) => {
+        formManager.updateAndValidateField("address", {
+            ...formManager.formState.address,
+            city,
+        });
+    };
+
+    const handleUpdateCountryAddress = (country: string) => {
+        formManager.updateAndValidateField("address", {
+            ...formManager.formState.address,
+            country,
+        });
+    };
+
+    return (
+        <form onSubmit={formManager.handleSubmit}>
+            <GenericTextInput
+                label={"Country"}
+                value={formManager.formState.address.country}
+                onValueChange={handleUpdateCountryAddress}
             />
-            <MyAddressComponent
-                label={"address"}
-                onValueChange={formManager.updaterAndValidatorForField("address")}
+            <GenericTextInput
+                label={"City"}
+                value={formManager.formState.address.city}
+                onValueChange={handleUpdateCityAddress}
+            />
+            <button type={"submit"}>Submit</button>
+        </form>
+    );
+};
+```
+
+#### Mappers
+
+```tsx
+interface DataModel {
+    someAttribute: string;
+    address: {
+        city: string;
+        country: string;
+    };
+}
+interface SimpleFormState {
+    someAttribute: string;
+    addressCity: string;
+    addressCountry: string;
+}
+
+const mapDataModelToFormState = (data: DataModel): SimpleFormState => {
+    return {
+        someAttribute: data.someAttribute,
+        addressCity: data.address.city,
+        addressCountry: data.address.country,
+    };
+};
+
+const mapFormStateToDataModel = (formState: SimpleFormState): DataModel => {
+    return {
+        someAttribute: formState.someAttribute,
+        address: {
+            city: formState.addressCity,
+            country: formState.addressCountry,
+        },
+    };
+};
+
+export const SimpleForm = () => {
+    const formManager = useFormManager<SimpleFormState>({
+        initialState: mapDataModelToFormState(initialState),
+        onSubmit: (formState: SimpleFormState) => handleSubmit(mapFormStateToDataModel(formState)),
+    });
+
+    return (
+        <form onSubmit={formManager.handleSubmit}>
+            <GenericTextInput
+                label={"Country"}
+                value={formManager.formState.addressCountry}
+                onValueChange={formManager.updaterAndValidatorForField("addressCountry")}
+            />
+            <GenericTextInput
+                label={"City"}
+                value={formManager.formState.addressCity}
+                onValueChange={formManager.updaterAndValidatorForField("addressCity")}
+            />
+            <button type={"submit"}>Submit</button>
+        </form>
+    );
+};
+```
+
+#### Custom component
+
+```tsx
+interface SimpleFormState {
+    someAttribute: string;
+    address: {
+        city: string;
+        country: string;
+    };
+}
+
+export const SimpleForm = () => {
+    const formManager = useFormManager<SimpleFormState>({
+        onSubmit: handleSubmit,
+    });
+
+    return (
+        <form onSubmit={formManager.handleSubmit}>
+            <GenericAddressComponent
+                label={"Country"}
                 value={formManager.formState.address}
-            />
-            <GenericSelectInput
-                label={"loveForDogs"}
-                options={loveForDogsOptions}
-                onValueChange={formManager.updaterAndValidatorForField("loveForDogs")}
-                value={formManager.formState.loveForDogs}
+                onValueChange={formManager.updaterAndValidatorForField("address")}
             />
             <button type={"submit"}>Submit</button>
         </form>

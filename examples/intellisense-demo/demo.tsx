@@ -1,6 +1,6 @@
 import React from "react";
 import { useFormManager } from "@src/useFormManager";
-import { GenericTextInput } from "../GenericTextInput";
+import { GenericTextInput } from "../form-examples/inputs/GenericTextInput";
 
 interface SimpleFormData {
     firstName: string;
