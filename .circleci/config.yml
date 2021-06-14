@@ -1,0 +1,24 @@
+version: 2.1
+orbs:
+    node: circleci/node@4.5.0
+    codecov: codecov/codecov@1.2.3
+jobs:
+    build-and-test:
+        executor:
+            name: node/default
+        steps:
+            - checkout
+            - node/install-packages:
+                  override-ci-command: npm ci --ignore-scripts
+            - run:
+                  command: npm run type-check
+            - run:
+                  command: npm run test
+            - store_artifacts:
+                  path: .tests/coverage
+            - codecov/upload
+
+workflows:
+    test_package:
+        jobs:
+            - build-and-test

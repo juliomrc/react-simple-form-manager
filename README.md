@@ -1,5 +1,23 @@
 # react-simple-form-manager
 
+<p align="center">
+    <a href="https://github.com/juliomrc/react-simple-form-manager/blob/main/LICENSE">
+        <img src="https://img.shields.io/github/license/juliomrc/react-simple-form-manager" alt="MIT license">
+    </a>
+    <a href="https://www.npmjs.com/package/react-simple-form-manager">
+        <img src="https://img.shields.io/bundlephobia/min/react-simple-form-manager" alt="npm size">
+    </a>
+    <a href="https://www.npmjs.com/package/react-simple-form-manager">
+        <img src="https://img.shields.io/npm/v/react-simple-form-manager" alt="npm version">
+    </a>
+    <a href="https://app.circleci.com/pipelines/github/juliomrc/react-simple-form-manager">
+        <img src="https://img.shields.io/circleci/build/github/juliomrc/react-simple-form-manager" alt="build">
+    </a>
+    <a href="https://app.codecov.io/gh/juliomrc/react-simple-form-manager/">
+        <img src="https://img.shields.io/codecov/c/github/juliomrc/react-simple-form-manager" alt="test coverage">
+    </a>
+</p>
+
 ## Table of contents
 
 -   [Motivation](#motivation)
