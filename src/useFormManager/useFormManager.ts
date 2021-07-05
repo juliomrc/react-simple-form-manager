@@ -106,15 +106,24 @@ export const useFormManager = <TFormData>({
     };
 
     const handleSubmit = useCallback(
-        (event: React.SyntheticEvent) => {
-            event.preventDefault();
+        (event?: React.SyntheticEvent) => {
+            event?.preventDefault();
             setTriedSubmitting(true);
 
             if (allowInvalidSubmit || (formValues.hasEdits && !formValidations.hasErrors)) {
+                formValues.setHasEdits(false);
                 onSubmit(formValues.formState);
             }
         },
-        [setTriedSubmitting, formValues.hasEdits, formValidations.hasErrors, onSubmit],
+        [
+            setTriedSubmitting,
+            formValues.formState,
+            formValues.hasEdits,
+            formValidations.hasErrors,
+            formValues.setHasEdits,
+            onSubmit,
+            allowInvalidSubmit,
+        ],
     );
 
     return {

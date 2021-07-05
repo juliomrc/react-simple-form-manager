@@ -12,7 +12,7 @@ function shallowEqual(object1: Record<string, unknown>, object2: Record<string, 
         return false;
     }
 
-    for (let key of object1keys) {
+    for (const key of object1keys) {
         if (object1[key] !== object2[key]) {
             return false;
         }
@@ -21,6 +21,7 @@ function shallowEqual(object1: Record<string, unknown>, object2: Record<string, 
     return true;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function reducer<TFormData extends Record<string, any>>(
     state: TFormData,
     action: Action<TFormData>,

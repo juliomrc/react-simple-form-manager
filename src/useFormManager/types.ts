@@ -32,7 +32,7 @@ export interface UseFormManagerOut<TFormData> {
     updateAndValidateField: <K extends keyof TFormData>(field: K, fieldValue: TFormData[K]) => void;
     updateAndValidateState: (updatedState: Partial<TFormData>) => void;
     allowErrorVisibility: (field: keyof TFormData) => void;
-    handleSubmit: (event: React.SyntheticEvent) => void;
+    handleSubmit: (event?: React.SyntheticEvent) => void;
 }
 
 export interface UseFormValidationsOut<TFormData> {
@@ -47,6 +47,7 @@ export interface UseFormValuesOut<TFormData> {
     formState: TFormData;
     hasEdits: boolean;
     updateState: (partialState: Partial<TFormData>) => void;
+    setHasEdits: (hasEdits: boolean) => void;
 }
 
 export type FormValidationsState<TFormData> = Partial<Record<keyof TFormData, boolean>>;
