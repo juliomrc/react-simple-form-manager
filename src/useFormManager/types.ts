@@ -31,6 +31,7 @@ export interface UseFormManagerOut<TFormData> {
     allowErrorVisibilityForField: <K extends keyof TFormData>(field: K) => () => void;
     updateAndValidateField: <K extends keyof TFormData>(field: K, fieldValue: TFormData[K]) => void;
     updateAndValidateState: (updatedState: Partial<TFormData>) => void;
+    setHasEdits: (hasEdits: boolean) => void;
     allowErrorVisibility: (field: keyof TFormData) => void;
     handleSubmit: (event?: React.SyntheticEvent) => void;
 }

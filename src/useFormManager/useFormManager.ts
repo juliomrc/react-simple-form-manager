@@ -135,6 +135,7 @@ export const useFormManager = <TFormData>({
         allowErrorVisibilityForField,
         updateAndValidateField,
         updateAndValidateState,
+        setHasEdits: formValues.setHasEdits,
         allowErrorVisibility: formValidations.allowErrorVisibility,
         handleSubmit,
     };

@@ -119,6 +119,7 @@ export const SimpleForm: React.FC<SimpleFormProps> = (props) => {
 | allowErrorVisibilityForField | `(fieldName: string) => () => void;`                       | Returns the callback to trigger the visibility of the error |
 | updateAndValidateField       | `(fieldName: string, fieldValue: TFormValue) => void;`     | Callback to update the field value                          |
 | updateAndValidateState       | `(formState: TFormState) => void;`                         | Callback to update the whole state at once                  |
+| setHasEdits                  | `(hasEdits: boolean) => void;`                             | Callback to manually set the `hasEdits` flag                |
 | allowErrorVisibility         | `(fieldName: string) => void;`                             | Callback to trigger the visibility of the error             |
 | handleSubmit                 | `() => void;`                                              | Callback to pass to the form `onSubmit`                     |
 
