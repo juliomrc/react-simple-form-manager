@@ -167,7 +167,7 @@ it("Does not submit forms with errors", () => {
     expect(mockSubmit).toHaveBeenCalledTimes(1);
 });
 
-it("Bypasses errors and edits validations with allowInvalidSubmit", () => {
+it("Bypasses edits and errors validations with allowSubmitWhen: always", () => {
     const mockSubmit = jest.fn();
     const { result } = renderHook(() =>
         useFormManager<FormState>({
@@ -178,12 +178,40 @@ it("Bypasses errors and edits validations with allowInvalidSubmit", () => {
             validators: {
                 age: (age: number) => age < 18,
             },
-            allowInvalidSubmit: true,
+            allowSubmitWhen: "always",
         }),
     );
 
     act(() => {
         result.current.handleSubmit({ preventDefault: jest.fn } as unknown as React.SyntheticEvent);
+    });
+
+    expect(mockSubmit).toHaveBeenCalledTimes(1);
+});
+
+it("Bypasses only edits with allowSubmitWhen: hasNoErrors", () => {
+    const mockSubmit = jest.fn();
+    const { result } = renderHook(() =>
+        useFormManager<FormState>({
+            onSubmit: mockSubmit,
+            initialState: {
+                age: 20,
+            },
+            validators: {
+                age: (age: number) => age < 18,
+            },
+            allowSubmitWhen: "hasNoErrors",
+        }),
+    );
+
+    act(() => {
+        result.current.handleSubmit();
+    });
+
+    expect(mockSubmit).toHaveBeenCalledTimes(1);
+
+    act(() => {
+        result.current.updateAndValidateField("age", 15);
     });
 
     expect(mockSubmit).toHaveBeenCalledTimes(1);

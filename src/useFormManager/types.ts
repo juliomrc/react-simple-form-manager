@@ -3,7 +3,7 @@ export interface UseFormManagerProps<TFormState> {
     validators?: FormValidators<TFormState>;
     showErrorsAfter?: ShowErrorsAfter;
     onSubmit: (formState: TFormState) => void;
-    allowInvalidSubmit?: boolean;
+    allowSubmitWhen?: AllowSubmitWhen;
 }
 
 export type FormValidators<TFormState> = {
@@ -13,6 +13,7 @@ export type FormValidators<TFormState> = {
     ) => boolean;
 };
 
+export type AllowSubmitWhen = "hasNoErrors" | "hasEditsAndNoErrors" | "always";
 type ShowErrorsAfter = "customTouch" | "submit" | "always";
 
 export interface UseFormValidationsProps {

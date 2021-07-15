@@ -2,13 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useFormValidations } from "./useFormValidations";
 import { useFormValues } from "./useFormValues";
 import { FormValidators, UseFormManagerOut, UseFormManagerProps } from "./types";
+import { shouldAllowSubmit } from "./shouldAllowSubmit";
 
 export const useFormManager = <TFormData>({
     validators = {} as FormValidators<TFormData>,
     initialState = {},
     onSubmit,
     showErrorsAfter = "submit",
-    allowInvalidSubmit,
+    allowSubmitWhen = "hasEditsAndNoErrors",
 }: UseFormManagerProps<TFormData>): UseFormManagerOut<TFormData> => {
     const [triedSubmitting, setTriedSubmitting] = useState(false);
 
@@ -110,7 +111,9 @@ export const useFormManager = <TFormData>({
             event?.preventDefault();
             setTriedSubmitting(true);
 
-            if (allowInvalidSubmit || (formValues.hasEdits && !formValidations.hasErrors)) {
+            if (
+                shouldAllowSubmit(allowSubmitWhen, formValues.hasEdits, formValidations.hasErrors)
+            ) {
                 formValues.setHasEdits(false);
                 onSubmit(formValues.formState);
             }
@@ -122,7 +125,8 @@ export const useFormManager = <TFormData>({
             formValidations.hasErrors,
             formValues.setHasEdits,
             onSubmit,
-            allowInvalidSubmit,
+            allowSubmitWhen,
+            shouldAllowSubmit,
         ],
     );
 
