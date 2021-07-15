@@ -99,13 +99,13 @@ export const SimpleForm: React.FC<SimpleFormProps> = (props) => {
 
 ### Props
 
-| Name               | Type                                             | Default   | Description                                                     |
-| ------------------ | ------------------------------------------------ | --------- | --------------------------------------------------------------- |
-| initialState       | [Partial\<TFormState\>](#form-state)             | {}        | Initial data for form state                                     |
-| validators         | [FormValidators\<TFormState\>](#form-validators) | {}        | Object with callbacks used to validate each form field          |
-| showErrorsAfter    | [ShowErrorsAfter](#show-errors-after)            | "submit"  | Moment when to trigger the visibility of the validation errors  |
-| onSubmit           | `(formState: TFormState) => void`                | undefined | Callback executed when the form is submitted with no errors     |
-| allowInvalidSubmit | `boolean`                                        | undefined | Allow executing the `onSubmit` callback with errors or no edits |
+| Name            | Type                                             | Default               | Description                                                             |
+| --------------- | ------------------------------------------------ | --------------------- | ----------------------------------------------------------------------- |
+| initialState    | [Partial\<TFormState\>](#form-state)             | {}                    | Initial data for form state                                             |
+| validators      | [FormValidators\<TFormState\>](#form-validators) | {}                    | Object with callbacks used to validate each form field                  |
+| showErrorsAfter | [ShowErrorsAfter](#show-errors-after)            | "submit"              | Moment when to trigger the visibility of the validation errors          |
+| onSubmit        | `(formState: TFormState) => void`                | undefined             | Callback executed when the form is submitted with no errors             |
+| allowSubmitWhen | [AllowSubmitWhen](#allow-submit-when)            | "hasEditsAndNoErrors" | Which flags are used to allow prevent executing the `onSubmit` callback |
 
 ### Output
 
@@ -216,6 +216,18 @@ Fields are validated on each change, but you might want to show the errors only 
 -   `always` will always display the error message for every field.
 -   `submit` will display the error messages for every field after the user tries to submit the form for the first time.
 -   `customTouch` will display the error message for each field as soon as the `allowErrorVisibility` is executed, and for every field after the the user tries to submit the form for the first time.
+
+### Allow submit when
+
+```typescript
+type AllowSubmitWhen = "hasEditsAndNoErrors" | "hasNoErrors" | "always";
+```
+
+Both the `hasEdits` and the `hasErrors` flags are always updated nonetheless. However, you might want to allow submitting the form with different combinations.
+
+-   `hasEditsAndNoErrors` will validate if there are any edits to the initial state and if there are no errors in the form.
+-   `hasNoErrors` will only validate if there are no errors in the form.
+-   `always` will always allow submitting the form.
 
 ### Visible errors
 
