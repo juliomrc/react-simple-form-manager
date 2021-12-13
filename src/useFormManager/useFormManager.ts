@@ -98,8 +98,8 @@ export const useFormManager = <TFormData>({
 
     const allowErrorVisibilityForField = useCallback(
         <K extends keyof TFormData>(field: K) => {
-            const allowDynamicValidationsForField = (isVisible?: boolean) => {
-                formValidations.allowErrorVisibility(field, isVisible);
+            const allowDynamicValidationsForField = () => {
+                formValidations.allowErrorVisibility(field, true);
             };
 
             return allowDynamicValidationsForField;

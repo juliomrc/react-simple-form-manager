@@ -117,7 +117,7 @@ export const SimpleForm: React.FC<SimpleFormProps> = (props) => {
 | visibleErrors                          | [VisibleErrors](#visible-errors)                           | Object with the errors that should be visible                                                       |
 | updaterAndValidatorForField            | `(fieldName: string) => (fieldValue: TFormValue) => void;` | Returns the callback to update the field value                                                      |
 | updaterForFieldToTriggerAllValidations | `(fieldName: string) => (fieldValue: TFormValue) => void;` | Returns the callback to update the field value and trigger the validations for all other fields too |
-| allowErrorVisibilityForField           | `(fieldName: string) => (isVisible?: boolean) => void;`    | Returns the callback to trigger the visibility of the error (`isVisible` defaults to `true`)        |
+| allowErrorVisibilityForField           | `(fieldName: string) => () => void;`                       | Returns a callback to allow the visibility of the error                                             |
 | updateAndValidateField                 | `(fieldName: string, fieldValue: TFormValue) => void;`     | Callback to update the field value                                                                  |
 | updateFieldAndTriggerAllValidations    | `(fieldName: string, fieldValue: TFormValue) => void;`     | Callback to update the field value and trigger the validations for all other fields too             |
 | updateAndValidateState                 | `(formState: Partial<TFormState>) => void;`                | Callback to update the whole state at once                                                          |

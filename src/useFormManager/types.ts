@@ -32,9 +32,7 @@ export interface UseFormManagerOut<TFormData> {
     updaterForFieldToTriggerAllValidations: <K extends keyof TFormData>(
         field: K,
     ) => (fieldValue: TFormData[K]) => void;
-    allowErrorVisibilityForField: <K extends keyof TFormData>(
-        field: K,
-    ) => (visible?: boolean) => void;
+    allowErrorVisibilityForField: <K extends keyof TFormData>(field: K) => () => void;
     updateAndValidateField: <K extends keyof TFormData>(field: K, fieldValue: TFormData[K]) => void;
     updateFieldAndTriggerAllValidations: <K extends keyof TFormData>(
         field: K,
