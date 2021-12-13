@@ -29,11 +29,22 @@ export interface UseFormManagerOut<TFormData> {
     updaterAndValidatorForField: <K extends keyof TFormData>(
         field: K,
     ) => (fieldValue: TFormData[K]) => void;
-    allowErrorVisibilityForField: <K extends keyof TFormData>(field: K) => () => void;
+    updaterForFieldToTriggerAllValidations: <K extends keyof TFormData>(
+        field: K,
+    ) => (fieldValue: TFormData[K]) => void;
+    allowErrorVisibilityForField: <K extends keyof TFormData>(
+        field: K,
+    ) => (visible?: boolean) => void;
     updateAndValidateField: <K extends keyof TFormData>(field: K, fieldValue: TFormData[K]) => void;
+    updateFieldAndTriggerAllValidations: <K extends keyof TFormData>(
+        field: K,
+        value: TFormData[K],
+    ) => void;
     updateAndValidateState: (updatedState: Partial<TFormData>) => void;
     setHasEdits: (hasEdits: boolean) => void;
-    allowErrorVisibility: (field: keyof TFormData) => void;
+    allowErrorVisibility: (field: keyof TFormData, visible?: boolean) => void;
+    resetAllErrorsVisibility: () => void;
+    resetFormWithNewState: (state: Partial<TFormData>) => void;
     handleSubmit: (event?: React.SyntheticEvent) => void;
 }
 
@@ -41,8 +52,9 @@ export interface UseFormValidationsOut<TFormData> {
     hasErrors: boolean;
     errorsState: FormValidationsState<TFormData>;
     visibleErrors: FormValidationsState<TFormData>;
-    allowErrorVisibility: (field: keyof TFormData) => void;
+    allowErrorVisibility: (field: keyof TFormData, visible?: boolean) => void;
     setFieldErrorState: (field: keyof TFormData, hasError: boolean) => void;
+    resetAllErrorsVisibility: () => void;
 }
 
 export interface UseFormValuesOut<TFormData> {

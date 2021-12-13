@@ -112,4 +112,51 @@ describe("Updates the visibleErrors properly", () => {
 
         expect(result.current.visibleErrors.firstName).toBeTruthy();
     });
+
+    it("Hides the error after allowErrorVisibility callback with visible=false for showErrorsAfter=customTouch", () => {
+        const { result } = renderHook(() =>
+            useFormValidations<FormState>({ showErrorsAfter: "customTouch" }),
+        );
+
+        act(() => {
+            result.current.setFieldErrorState("firstName", true);
+        });
+
+        expect(result.current.visibleErrors.firstName).toBeFalsy();
+
+        act(() => {
+            result.current.allowErrorVisibility("firstName");
+        });
+
+        expect(result.current.visibleErrors.firstName).toBeTruthy();
+
+        act(() => {
+            result.current.allowErrorVisibility("firstName", false);
+        });
+
+        expect(result.current.visibleErrors.firstName).toBeFalsy();
+    });
+
+    it("Hides all the errors after resetErrorVisibility for showErrorsAfter=customTouch", () => {
+        const { result } = renderHook(() =>
+            useFormValidations<FormState>({ showErrorsAfter: "customTouch" }),
+        );
+
+        act(() => {
+            result.current.setFieldErrorState("firstName", true);
+            result.current.setFieldErrorState("lastName", true);
+            result.current.allowErrorVisibility("firstName");
+            result.current.allowErrorVisibility("lastName");
+        });
+
+        expect(result.current.visibleErrors.firstName).toBeTruthy();
+        expect(result.current.visibleErrors.lastName).toBeTruthy();
+
+        act(() => {
+            result.current.resetAllErrorsVisibility();
+        });
+
+        expect(result.current.visibleErrors.firstName).toBeFalsy();
+        expect(result.current.visibleErrors.lastName).toBeFalsy();
+    });
 });

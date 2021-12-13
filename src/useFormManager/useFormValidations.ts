@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { copyObjectKeysAndMapToNewValue } from "./copyObjectKeysAndMapToNewValue";
 import { UseFormValidationsProps, UseFormValidationsOut, FormValidationsState } from "./types";
 import { useReducerState } from "./useReducerState";
 
@@ -25,11 +26,17 @@ export const useFormValidations = <TFormData>(
     }, [props.showErrorsAfter, props.triedSubmitting, touchedFields, errorsState]);
 
     const allowErrorVisibility = useCallback(
-        (field: keyof TFormData) => {
-            setTouchedFields({ [field]: true } as FormValidationsState<TFormData>);
+        (field: keyof TFormData, isVisible = true) => {
+            setTouchedFields({ [field]: isVisible } as FormValidationsState<TFormData>);
         },
         [setTouchedFields],
     );
+
+    const resetAllErrorsVisibility = useCallback(() => {
+        const allTouchedFieldsAsFalse = copyObjectKeysAndMapToNewValue(touchedFields, false);
+
+        setTouchedFields(allTouchedFieldsAsFalse);
+    }, [setTouchedFields, touchedFields]);
 
     const setFieldErrorState = useCallback(
         (field: keyof TFormData, hasError: boolean) => {
@@ -48,5 +55,6 @@ export const useFormValidations = <TFormData>(
         visibleErrors,
         allowErrorVisibility,
         setFieldErrorState,
+        resetAllErrorsVisibility,
     };
 };

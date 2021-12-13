@@ -109,19 +109,23 @@ export const SimpleForm: React.FC<SimpleFormProps> = (props) => {
 
 ### Output
 
-| Name                         | Type                                                       | Description                                                 |
-| ---------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------- |
-| formState                    | [TFormState](#form-state)                                  | The current form state                                      |
-| hasEdits                     | `boolean`                                                  | If there was any change to the initialState                 |
-| hasErrors                    | `boolean`                                                  | If there are any errors in the form state                   |
-| visibleErrors                | [VisibleErrors](#visible-errors)                           | Object with the errors that should be visible               |
-| updaterAndValidatorForField  | `(fieldName: string) => (fieldValue: TFormValue) => void;` | Returns the callback to update the field value              |
-| allowErrorVisibilityForField | `(fieldName: string) => () => void;`                       | Returns the callback to trigger the visibility of the error |
-| updateAndValidateField       | `(fieldName: string, fieldValue: TFormValue) => void;`     | Callback to update the field value                          |
-| updateAndValidateState       | `(formState: TFormState) => void;`                         | Callback to update the whole state at once                  |
-| setHasEdits                  | `(hasEdits: boolean) => void;`                             | Callback to manually set the `hasEdits` flag                |
-| allowErrorVisibility         | `(fieldName: string) => void;`                             | Callback to trigger the visibility of the error             |
-| handleSubmit                 | `() => void;`                                              | Callback to pass to the form `onSubmit`                     |
+| Name                                   | Type                                                       | Description                                                                                         |
+| -------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| formState                              | [TFormState](#form-state)                                  | The current form state                                                                              |
+| hasEdits                               | `boolean`                                                  | If there was any change to the initialState                                                         |
+| hasErrors                              | `boolean`                                                  | If there are any errors in the form state                                                           |
+| visibleErrors                          | [VisibleErrors](#visible-errors)                           | Object with the errors that should be visible                                                       |
+| updaterAndValidatorForField            | `(fieldName: string) => (fieldValue: TFormValue) => void;` | Returns the callback to update the field value                                                      |
+| updaterForFieldToTriggerAllValidations | `(fieldName: string) => (fieldValue: TFormValue) => void;` | Returns the callback to update the field value and trigger the validations for all other fields too |
+| allowErrorVisibilityForField           | `(fieldName: string) => (isVisible?: boolean) => void;`    | Returns the callback to trigger the visibility of the error (`isVisible` defaults to `true`)        |
+| updateAndValidateField                 | `(fieldName: string, fieldValue: TFormValue) => void;`     | Callback to update the field value                                                                  |
+| updateFieldAndTriggerAllValidations    | `(fieldName: string, fieldValue: TFormValue) => void;`     | Callback to update the field value and trigger the validations for all other fields too             |
+| updateAndValidateState                 | `(formState: Partial<TFormState>) => void;`                | Callback to update the whole state at once                                                          |
+| setHasEdits                            | `(hasEdits: boolean) => void;`                             | Callback to manually set the `hasEdits` flag                                                        |
+| allowErrorVisibility                   | `(fieldName: string, isVisible?: boolean) => void;`        | Callback to trigger the visibility of the error (`isVisible` defaults to `true`)                    |
+| resetErrorVisibility                   | `() => void`                                               | Callback to set all errors visibility to `false`                                                    |
+| resetFormWithNewState                  | `(state: Partial<TFormState>) => void`                     | Callback to reset all the form internal variables and set a new state                               |
+| handleSubmit                           | `() => void;`                                              | Callback to pass to the form `onSubmit`                                                             |
 
 ### Form state
 

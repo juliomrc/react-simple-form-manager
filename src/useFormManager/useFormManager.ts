@@ -3,6 +3,7 @@ import { useFormValidations } from "./useFormValidations";
 import { useFormValues } from "./useFormValues";
 import { FormValidators, UseFormManagerOut, UseFormManagerProps } from "./types";
 import { shouldAllowSubmit } from "./shouldAllowSubmit";
+import { copyObjectKeysAndMapToNewValue } from "./copyObjectKeysAndMapToNewValue";
 
 export const useFormManager = <TFormData>({
     validators = {} as FormValidators<TFormData>,
@@ -67,6 +68,16 @@ export const useFormManager = <TFormData>({
         ],
     );
 
+    const updateFieldAndTriggerAllValidations = useCallback(
+        <K extends keyof TFormData>(field: K, value: TFormData[K]) => {
+            updateAndValidateState({
+                ...formValues.formState,
+                [field]: value,
+            });
+        },
+        [updateAndValidateState],
+    );
+
     const updaterAndValidatorForField = useCallback(
         <K extends keyof TFormData>(field: K) => {
             const fieldUpdaterAndValidator = (fieldValue: TFormData[K]) => {
@@ -78,10 +89,17 @@ export const useFormManager = <TFormData>({
         [updateAndValidateField],
     );
 
+    const updaterForFieldToTriggerAllValidations = useCallback(
+        <K extends keyof TFormData>(field: K) => {
+            return (value: TFormData[K]) => updateFieldAndTriggerAllValidations(field, value);
+        },
+        [updateFieldAndTriggerAllValidations],
+    );
+
     const allowErrorVisibilityForField = useCallback(
         <K extends keyof TFormData>(field: K) => {
-            const allowDynamicValidationsForField = () => {
-                formValidations.allowErrorVisibility(field);
+            const allowDynamicValidationsForField = (isVisible?: boolean) => {
+                formValidations.allowErrorVisibility(field, isVisible);
             };
 
             return allowDynamicValidationsForField;
@@ -91,20 +109,34 @@ export const useFormManager = <TFormData>({
 
     useEffect(() => {
         if (initialState) {
+            const validateInitialData = () => {
+                Object.keys(validators).forEach((key) => {
+                    const fieldKey = key as keyof TFormData;
+                    const error = validators[fieldKey](
+                        formValues.formState[fieldKey],
+                        formValues.formState,
+                    );
+                    formValidations.setFieldErrorState(fieldKey, error);
+                });
+            };
+
             validateInitialData();
         }
     }, []);
 
-    const validateInitialData = () => {
-        Object.keys(validators).forEach((key) => {
-            const fieldKey = key as keyof TFormData;
-            const error = validators[fieldKey](
-                formValues.formState[fieldKey],
+    const resetFormWithNewState = useCallback(
+        (newState: Partial<TFormData>) => {
+            const stateWithUndefinedValues = copyObjectKeysAndMapToNewValue(
                 formValues.formState,
+                undefined,
             );
-            formValidations.setFieldErrorState(fieldKey, error);
-        });
-    };
+
+            updateAndValidateState({ ...stateWithUndefinedValues, ...newState });
+            formValues.setHasEdits(false);
+            formValidations.resetAllErrorsVisibility();
+        },
+        [updateAndValidateState, formValues.setHasEdits, formValidations.resetAllErrorsVisibility],
+    );
 
     const handleSubmit = useCallback(
         (event?: React.SyntheticEvent) => {
@@ -136,11 +168,15 @@ export const useFormManager = <TFormData>({
         visibleErrors: formValidations.visibleErrors,
         hasErrors: formValidations.hasErrors,
         updaterAndValidatorForField,
+        updaterForFieldToTriggerAllValidations,
         allowErrorVisibilityForField,
         updateAndValidateField,
+        updateFieldAndTriggerAllValidations,
         updateAndValidateState,
         setHasEdits: formValues.setHasEdits,
         allowErrorVisibility: formValidations.allowErrorVisibility,
+        resetAllErrorsVisibility: formValidations.resetAllErrorsVisibility,
+        resetFormWithNewState,
         handleSubmit,
     };
 };

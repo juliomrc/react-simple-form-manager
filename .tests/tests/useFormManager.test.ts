@@ -6,6 +6,7 @@ interface FormState {
     firstName: string;
     lastName: string;
     age: number;
+    likesPets: boolean;
 }
 
 it("Does not break with undefined props and has proper initial values", () => {
@@ -84,6 +85,39 @@ it("Updates the whole state values and validations properly", () => {
 
     expect(result.current.formState).toEqual({ age: 15, lastName: "Doe", firstName: "John" });
     expect(result.current.visibleErrors).toEqual({ age: true });
+});
+
+it("Triggers all validations and updates field with updaterFieldAndTriggerAllValidations", () => {
+    const { result } = renderHook(() =>
+        useFormManager<FormState>({
+            onSubmit: jest.fn(),
+            initialState: {
+                firstName: "John",
+                age: 15,
+                likesPets: false,
+            },
+            validators: {
+                age: (age: number) => age < 18,
+                likesPets: (likesPets: boolean, formState?: FormState) => {
+                    // Every grown adult must like pets :)
+                    if (formState?.age && formState.age > 25) {
+                        return !likesPets;
+                    }
+                    return false;
+                },
+            },
+            showErrorsAfter: "always",
+        }),
+    );
+
+    expect(result.current.visibleErrors).toEqual({ age: true, likesPets: false });
+
+    act(() => {
+        result.current.updaterForFieldToTriggerAllValidations("age")(50);
+    });
+
+    expect(result.current.formState).toEqual({ age: 50, firstName: "John", likesPets: false });
+    expect(result.current.visibleErrors).toEqual({ age: false, likesPets: true });
 });
 
 it("Returns callbacks to update the correct fields", () => {
@@ -215,4 +249,39 @@ it("Bypasses only edits with allowSubmitWhen: hasNoErrors", () => {
     });
 
     expect(mockSubmit).toHaveBeenCalledTimes(1);
+});
+
+it("Properly resets state", () => {
+    const mockSubmit = jest.fn();
+    const { result } = renderHook(() =>
+        useFormManager<FormState>({
+            onSubmit: mockSubmit,
+            initialState: {
+                age: 15,
+            },
+            validators: {
+                age: (age: number) => age < 18,
+            },
+            allowSubmitWhen: "hasNoErrors",
+            showErrorsAfter: "customTouch",
+        }),
+    );
+
+    act(() => {
+        result.current.updateAndValidateField("firstName", "John");
+        result.current.allowErrorVisibility("age", true);
+    });
+
+    expect(result.current.hasEdits).toBeTruthy();
+    expect(result.current.hasErrors).toBeTruthy();
+    expect(result.current.visibleErrors.age).toBeTruthy();
+
+    act(() => {
+        result.current.resetFormWithNewState({ age: 14 });
+    });
+
+    expect(result.current.hasEdits).toBeFalsy();
+    expect(result.current.hasErrors).toBeTruthy();
+    expect(result.current.visibleErrors.age).toBeFalsy();
+    expect(result.current.formState).toEqual({ age: 14 });
 });
