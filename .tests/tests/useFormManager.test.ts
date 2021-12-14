@@ -270,6 +270,7 @@ it("Properly resets state", () => {
     act(() => {
         result.current.updateAndValidateField("firstName", "John");
         result.current.allowErrorVisibility("age", true);
+        result.current.handleSubmit();
     });
 
     expect(result.current.hasEdits).toBeTruthy();

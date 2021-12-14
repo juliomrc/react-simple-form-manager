@@ -134,8 +134,14 @@ export const useFormManager = <TFormData>({
             updateAndValidateState({ ...stateWithUndefinedValues, ...newState });
             formValues.setHasEdits(false);
             formValidations.resetAllErrorsVisibility();
+            setTriedSubmitting(false);
         },
-        [updateAndValidateState, formValues.setHasEdits, formValidations.resetAllErrorsVisibility],
+        [
+            updateAndValidateState,
+            formValues.setHasEdits,
+            formValidations.resetAllErrorsVisibility,
+            setTriedSubmitting,
+        ],
     );
 
     const handleSubmit = useCallback(
