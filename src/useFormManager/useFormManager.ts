@@ -68,14 +68,24 @@ export const useFormManager = <TFormData>({
         ],
     );
 
+    const runAllValidatorsForState = (formState: TFormData) => {
+        Object.keys(validators).forEach((key) => {
+            const fieldKey = key as keyof TFormData;
+            const error = validators[fieldKey](formState[fieldKey], formState);
+            formValidations.setFieldErrorState(fieldKey, error);
+        });
+    };
+
     const updateFieldAndTriggerAllValidations = useCallback(
         <K extends keyof TFormData>(field: K, value: TFormData[K]) => {
-            updateAndValidateState({
+            const stateAfterUpdate: TFormData = {
                 ...formValues.formState,
                 [field]: value,
-            });
+            };
+            runAllValidatorsForState(stateAfterUpdate);
+            formValues.updateState(stateAfterUpdate);
         },
-        [updateAndValidateState],
+        [formValues.updateState, runAllValidatorsForState],
     );
 
     const updaterAndValidatorForField = useCallback(
@@ -109,18 +119,7 @@ export const useFormManager = <TFormData>({
 
     useEffect(() => {
         if (initialState) {
-            const validateInitialData = () => {
-                Object.keys(validators).forEach((key) => {
-                    const fieldKey = key as keyof TFormData;
-                    const error = validators[fieldKey](
-                        formValues.formState[fieldKey],
-                        formValues.formState,
-                    );
-                    formValidations.setFieldErrorState(fieldKey, error);
-                });
-            };
-
-            validateInitialData();
+            runAllValidatorsForState(initialState as TFormData);
         }
     }, []);
 

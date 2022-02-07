@@ -7,10 +7,7 @@ export interface UseFormManagerProps<TFormState> {
 }
 
 export type FormValidators<TFormState> = {
-    [K in keyof Partial<TFormState>]: (
-        fieldValue: TFormState[K],
-        formState?: TFormState,
-    ) => boolean;
+    [K in keyof Partial<TFormState>]: (fieldValue: TFormState[K], formState: TFormState) => boolean;
 };
 
 export type AllowSubmitWhen = "hasNoErrors" | "hasEditsAndNoErrors" | "always";

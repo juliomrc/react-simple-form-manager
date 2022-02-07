@@ -87,7 +87,7 @@ it("Updates the whole state values and validations properly", () => {
     expect(result.current.visibleErrors).toEqual({ age: true });
 });
 
-it("Triggers all validations and updates field with updaterFieldAndTriggerAllValidations", () => {
+it("Triggers all validations (including for non initialized fields) and updates field with updaterForFieldToTriggerAllValidations", () => {
     const { result } = renderHook(() =>
         useFormManager<FormState>({
             onSubmit: jest.fn(),
@@ -98,10 +98,16 @@ it("Triggers all validations and updates field with updaterFieldAndTriggerAllVal
             },
             validators: {
                 age: (age: number) => age < 18,
-                likesPets: (likesPets: boolean, formState?: FormState) => {
+                likesPets: (likesPets: boolean, formState: FormState) => {
                     // Every grown adult must like pets :)
-                    if (formState?.age && formState.age > 25) {
+                    if (formState.age && formState.age > 25) {
                         return !likesPets;
+                    }
+                    return false;
+                },
+                lastName: (lastName: string, formState: FormState) => {
+                    if (formState.age > 18) {
+                        return !lastName;
                     }
                     return false;
                 },
@@ -110,14 +116,14 @@ it("Triggers all validations and updates field with updaterFieldAndTriggerAllVal
         }),
     );
 
-    expect(result.current.visibleErrors).toEqual({ age: true, likesPets: false });
+    expect(result.current.visibleErrors).toEqual({ age: true, likesPets: false, lastName: false });
 
     act(() => {
         result.current.updaterForFieldToTriggerAllValidations("age")(50);
     });
 
     expect(result.current.formState).toEqual({ age: 50, firstName: "John", likesPets: false });
-    expect(result.current.visibleErrors).toEqual({ age: false, likesPets: true });
+    expect(result.current.visibleErrors).toEqual({ age: false, likesPets: true, lastName: true });
 });
 
 it("Returns callbacks to update the correct fields", () => {
